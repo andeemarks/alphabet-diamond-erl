@@ -1,4 +1,4 @@
--module(alphabet-diamond_sup).
+-module(alphadiamond_sup).
 
 -behaviour(supervisor).
 
