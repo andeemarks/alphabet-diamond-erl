@@ -23,8 +23,11 @@ row_instructions_for(Letter) -> [Letter].
 
 -ifdef(TEST).
 
-basic_row_instructions_test() ->
+single_row_instructions_test() ->
 	?assert(["A"] == row_instructions_for("A")).
+
+multiple_row_instructions_test() ->
+	?assert(["A" "B"] == row_instructions_for("B")).
 
 % (fact (row-instructions-for "C") => [\A \B \C \B \A])
 
