@@ -1,0 +1,12 @@
+{application, alphabet-diamond,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { alphabet-diamond_app, []}},
+  {env, []}
+ ]}.
