@@ -2,6 +2,8 @@
 
 -behaviour(application).
 
+-define(ROW_TEMPLATE, "ZYXWVUTSRQPONMLKJIHGFEDCBABCDEFGHIJKLMNOPQRSTUVWXYZ").
+
 %% Application callbacks
 -export([start/2, stop/1]).
 
@@ -25,8 +27,17 @@ row_instructions_for(Letter) ->
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
+row_for(Letter) ->
+	re:replace(?ROW_TEMPLATE, "[^" ++ Letter ++ "]", " ", [global, {return,list}]).
 
 -ifdef(TEST).
+
+row_test_() ->
+	[
+		?_assertEqual("A", string:strip(row_for("A"))),
+		?_assertEqual("B B", string:strip(row_for("B"))),
+		?_assertEqual("J                 J", string:strip(row_for("J")))
+	].
 
 row_instructions_test_() ->
 	[
