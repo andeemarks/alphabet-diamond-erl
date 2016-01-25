@@ -33,6 +33,13 @@ everything_but(Letter) ->
 row_for(Letter) ->
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
+is_valid_spec(Spec) when not size(Spec) =:= 1 -> false;
+% is_valid_spec([H|T]) when length(H) > 1 -> false;
+is_valid_spec(Spec) -> 
+	TrimmedSpec = string:strip(Spec),
+	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
+	CleanSpec == TrimmedSpec.
+
 -ifdef(TEST).
 
 row_test_() ->
@@ -49,10 +56,27 @@ row_instructions_test_() ->
 		?_assertEqual("ABCBA", row_instructions_for("C"))
 	].
 
+	% (fact (valid-spec? "c") => truthy)
+	% (fact (valid-spec? "Z") => truthy)
+	% (fact (valid-spec? "  E   ") => truthy)
+	% (fact (valid-spec? "") => falsey)
+	% (fact (valid-spec? "AA") => falsey)
+	% (fact (valid-spec? " ") => falsey)
+	% (fact (valid-spec? "4") => falsey)
+	% (fact (valid-spec? "(") => falsey)
+	% (fact (valid-spec? nil) => falsey))
+
+
 valid_spec_test_() ->
 	[
-		?_assertTrue(is_valid_spec("A")),
-		?_assertFalse(is_valid_spec("*"))
+		?_assert(is_valid_spec("A")),
+		?_assert(is_valid_spec("C")),
+		?_assert(is_valid_spec("  E   ")),
+		?_assertNot(is_valid_spec("AA")),
+		?_assertNot(is_valid_spec(" ")),
+		?_assertNot(is_valid_spec("4")),
+		?_assertNot(is_valid_spec("{")),
+		?_assertNot(is_valid_spec(""))
 	].
 
 % smoke_test() ->
