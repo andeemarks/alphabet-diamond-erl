@@ -19,14 +19,11 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     ok.
 
-decapitate([_|T]) ->
-	T.
-
 row_instructions_for(Letter) -> 
 	Alphabet = lists:seq($A,$Z),
 	SubAlphabetEndPos = string:str(Alphabet, Letter),
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
-	lists:append(DiamondHalf, decapitate(lists:reverse(DiamondHalf))).
+	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
 
 -ifdef(TEST).
