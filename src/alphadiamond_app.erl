@@ -21,8 +21,9 @@ stop(_State) ->
 
 -ifdef(TEST).
 
-simple_test() ->
-    ok = application:start(alphadiamond),
-    ?assertNot(undefined == whereis(alphadiamond_app)).
+% row_test() ->
+
+smoke_test() ->
+    ok = application:start(alphadiamond).
 
 -endif.
