@@ -49,6 +49,12 @@ row_instructions_test_() ->
 		?_assertEqual("ABCBA", row_instructions_for("C"))
 	].
 
+valid_spec_test_() ->
+	[
+		?_assertTrue(is_valid_spec("A")),
+		?_assertFalse(is_valid_spec("*"))
+	].
+
 % smoke_test() ->
 %     ok = application:start(alphadiamond).
 
