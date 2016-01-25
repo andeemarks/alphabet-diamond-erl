@@ -27,8 +27,11 @@ row_instructions_for(Letter) ->
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
+everything_but(Letter) ->
+	"[^" ++ Letter ++ "]".
+
 row_for(Letter) ->
-	re:replace(?ROW_TEMPLATE, "[^" ++ Letter ++ "]", " ", [global, {return,list}]).
+	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
 -ifdef(TEST).
 
