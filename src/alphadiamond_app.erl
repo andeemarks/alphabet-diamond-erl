@@ -19,19 +19,26 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     ok.
 
-row_instructions_for(Letter) -> [Letter].
+decapitate([_|T]) ->
+	T.
+
+row_instructions_for(Letter) -> 
+	Alphabet = lists:seq($A,$Z),
+	SubAlphabetEndPos = string:str(Alphabet, Letter),
+	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
+	lists:append(DiamondHalf, decapitate(lists:reverse(DiamondHalf))).
+
 
 -ifdef(TEST).
 
-single_row_instructions_test() ->
-	?assert(["A"] == row_instructions_for("A")).
+row_instructions_test_() ->
+	[
+		?_assertEqual("A", row_instructions_for("A")),
+		?_assertEqual("ABA", row_instructions_for("B")),
+		?_assertEqual("ABCBA", row_instructions_for("C"))
+	].
 
-multiple_row_instructions_test() ->
-	?assert(["A" "B"] == row_instructions_for("B")).
-
-% (fact (row-instructions-for "C") => [\A \B \C \B \A])
-
-smoke_test() ->
-    ok = application:start(alphadiamond).
+% smoke_test() ->
+%     ok = application:start(alphadiamond).
 
 -endif.
