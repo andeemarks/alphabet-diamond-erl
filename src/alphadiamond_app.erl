@@ -38,7 +38,7 @@ is_valid_spec(Spec) when not size(Spec) =:= 1 -> false;
 is_valid_spec(Spec) -> 
 	TrimmedSpec = string:strip(Spec),
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
-	CleanSpec == TrimmedSpec.
+	CleanSpec =:= TrimmedSpec.
 
 -ifdef(TEST).
 
