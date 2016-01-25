@@ -19,9 +19,14 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     ok.
 
+row_instructions_for(Letter) -> [Letter].
+
 -ifdef(TEST).
 
-% row_test() ->
+basic_row_instructions_test() ->
+	?assert(["A"] == row_instructions_for("A")).
+
+% (fact (row-instructions-for "C") => [\A \B \C \B \A])
 
 smoke_test() ->
     ok = application:start(alphadiamond).
