@@ -31,6 +31,7 @@ everything_but(Letter) ->
 	"[^" ++ Letter ++ "]".
 
 row_for(Letter) ->
+	io:format("Letter: ~p\n", [Letter]),
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
 is_valid_spec(Spec) -> 
@@ -38,6 +39,11 @@ is_valid_spec(Spec) ->
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
 	% io:format("~p ~p", [CleanSpec, TrimmedSpec]),
 	(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1).
+
+diamond(Spec) -> 
+	Instructions = row_instructions_for(Spec),
+	io:format("~p\n", [Instructions]),
+	lists:map(fun(Instruction) -> row_for(Instruction) end, Instructions).
 
 -ifdef(TEST).
 
@@ -68,6 +74,7 @@ valid_spec_test_() ->
 	].
 
 smoke_test() ->
-    ok = application:start(alphadiamond).
+    ok = application:start(alphadiamond),
+    diamond("Z").
 
 -endif.
