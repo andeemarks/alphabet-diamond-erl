@@ -31,7 +31,7 @@ everything_but(Letter) ->
 	"[^" ++ Letter ++ "]".
 
 row_for(Letter) ->
-	io:format("Letter: ~p\n", [Letter]),
+	io:format(user, "Letter: ~p\n", [Letter]),
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
 is_valid_spec(Spec) -> 
@@ -42,8 +42,8 @@ is_valid_spec(Spec) ->
 
 diamond(Spec) -> 
 	Instructions = row_instructions_for(Spec),
-	io:format("~p\n", [Instructions]),
-	lists:map(fun(Instruction) -> row_for(Instruction) end, Instructions).
+	io:format(user, "~p\n", [Instructions]),
+	lists:map(fun(Instruction) -> io:format(user, "~p\n", [row_for(integer_to_list(Instruction))]) end, Instructions).
 
 -ifdef(TEST).
 
