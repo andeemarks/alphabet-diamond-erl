@@ -21,29 +21,48 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     ok.
 
+type_of(X) when is_integer(X)   -> integer;
+type_of(X) when is_float(X)     -> float;
+type_of(X) when is_list(X)      -> list;
+type_of(X) when is_tuple(X)     -> tuple;
+type_of(X) when is_bitstring(X) -> bitstring;  % will fail before e12
+type_of(X) when is_binary(X)    -> binary;
+type_of(X) when is_boolean(X)   -> boolean;
+type_of(X) when is_function(X)  -> function;
+type_of(X) when is_pid(X)       -> pid;
+type_of(X) when is_port(X)      -> port;
+type_of(X) when is_reference(X) -> reference;
+type_of(X) when is_atom(X)      -> atom;
+type_of(_X)                     -> unknown.
+
 row_instructions_for(Letter) -> 
 	Alphabet = lists:seq($A,$Z),
 	SubAlphabetEndPos = string:str(Alphabet, Letter),
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
+everything_but(Letter) when is_integer(Letter) ->
+	"[^" ++ io_lib:format("~c", [Letter]) ++ "]";
 everything_but(Letter) ->
 	"[^" ++ Letter ++ "]".
 
 row_for(Letter) ->
-	io:format(user, "Letter: ~p\n", [Letter]),
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
 is_valid_spec(Spec) -> 
 	TrimmedSpec = string:strip(Spec),
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
-	% io:format("~p ~p", [CleanSpec, TrimmedSpec]),
 	(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1).
 
 diamond(Spec) -> 
-	Instructions = row_instructions_for(Spec),
-	io:format(user, "~p\n", [Instructions]),
-	lists:map(fun(Instruction) -> io:format(user, "~p\n", [row_for(integer_to_list(Instruction))]) end, Instructions).
+	ValidSpec = is_valid_spec(Spec),
+    if
+    	ValidSpec ->
+			Instructions = row_instructions_for(Spec),
+			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions);
+		true ->
+			io:format(user, "INVALID INPUT\n", [])
+	end.
 
 -ifdef(TEST).
 
@@ -73,8 +92,11 @@ valid_spec_test_() ->
 		?_assertNot(is_valid_spec(""))
 	].
 
-smoke_test() ->
+positive_smoke_test() ->
     ok = application:start(alphadiamond),
     diamond("Z").
+
+negative_smoke_test() ->
+    ?_assertNot(diamond("6")).
 
 -endif.
