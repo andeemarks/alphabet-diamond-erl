@@ -59,9 +59,11 @@ diamond(Spec) ->
     if
     	ValidSpec ->
 			Instructions = row_instructions_for(Spec),
-			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions);
+			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
+			true;
 		true ->
-			io:format(user, "INVALID INPUT\n", [])
+			io:format(user, "INVALID INPUT\n", []),
+			false
 	end.
 
 -ifdef(TEST).
@@ -93,8 +95,7 @@ valid_spec_test_() ->
 	].
 
 positive_smoke_test() ->
-    ok = application:start(alphadiamond),
-    diamond("Z").
+    ?_assert(diamond("Z")).
 
 negative_smoke_test() ->
     ?_assertNot(diamond("6")).
