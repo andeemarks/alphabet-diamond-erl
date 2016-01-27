@@ -11,10 +11,6 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
-%% ===================================================================
-%% Application callbacks
-%% ===================================================================
-
 start(_StartType, _StartArgs) ->
     alphadiamond_sup:start_link().
 
@@ -27,10 +23,8 @@ row_instructions_for(Letter) ->
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
-everything_but(Letter) when is_integer(Letter) ->
-	"[^" ++ io_lib:format("~c", [Letter]) ++ "]";
-everything_but(Letter) ->
-	"[^" ++ Letter ++ "]".
+everything_but(Letter) when is_integer(Letter) -> 	"[^" ++ io_lib:format("~c", [Letter]) ++ "]";
+everything_but(Letter) -> 							"[^" ++ Letter ++ "]".
 
 row_for(Letter) ->
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
