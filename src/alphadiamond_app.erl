@@ -62,7 +62,7 @@ diamond(Spec) ->
 			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
 			true;
 		true ->
-			io:format(user, "INVALID INPUT\n", []),
+			io:format(user, "\nINVALID INPUT\n", []),
 			false
 	end.
 
@@ -95,9 +95,9 @@ valid_spec_test_() ->
 	].
 
 positive_smoke_test() ->
-    ?_assert(diamond("Z")).
+    ?assert(diamond("Z")).
 
 negative_smoke_test() ->
-    ?_assertNot(diamond("6")).
+    ?assertNot(diamond(";")).
 
 -endif.
