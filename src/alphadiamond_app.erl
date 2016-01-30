@@ -37,11 +37,11 @@ process_spec({false, _}) 		-> handle_invalid_spec();
 process_spec({true, ValidSpec}) ->
 	Instructions = row_instructions_for(ValidSpec),
 	lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
-	true.
+	ok.
 
 handle_invalid_spec() ->
 	io:format(user, "\nINVALID INPUT\n", []),
-	false.	
+	error.	
 
 -ifdef(TEST).
 
@@ -74,14 +74,14 @@ valid_spec_test_() -> [
 ].
 
 positive_smoke_test_() -> [
-    ?_assert(diamond(['A'])),
-    ?_assert(diamond(["A"]))
+    ?_assertEqual(ok, diamond(['A'])),
+    ?_assertEqual(ok, diamond(["A"]))
 ].	
 
 negative_smoke_test_() -> [
-	?_assertNot(diamond([";"])),
-	?_assertNot(diamond()),
-	?_assertNot(diamond([]))
+	?_assertEqual(error, diamond([";"])),
+	?_assertEqual(error, diamond()),
+	?_assertEqual(error, diamond([]))
 ].
 
 -endif.
