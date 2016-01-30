@@ -31,17 +31,13 @@ diamond() 							-> handle_invalid_spec().
 diamond([]) 						-> handle_invalid_spec();
 diamond([Spec|_]) 					-> diamond(Spec);
 diamond(Spec) when is_atom(Spec) 	-> diamond(atom_to_list(Spec));
-diamond(Spec) ->
-	[IsValidSpec|ValidSpec] = is_valid_spec(Spec),
-    if
-    	IsValidSpec ->
-			Instructions = row_instructions_for(ValidSpec),
-			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
-			true;
-		true ->
-			handle_invalid_spec()
-	end.
+diamond(Spec) 						-> process_spec(is_valid_spec(Spec)).
 
+process_spec([false|_]) 		-> handle_invalid_spec();
+process_spec([true|ValidSpec]) 	->
+	Instructions = row_instructions_for(ValidSpec),
+	lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
+	true.
 
 handle_invalid_spec() ->
 	io:format(user, "\nINVALID INPUT\n", []),
