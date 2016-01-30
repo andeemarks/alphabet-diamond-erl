@@ -1,34 +1,25 @@
 -module(alphadiamond_app).
 
--behaviour(application).
-
 -define(ROW_TEMPLATE, "ZYXWVUTSRQPONMLKJIHGFEDCBABCDEFGHIJKLMNOPQRSTUVWXYZ").
 
 %% Application callbacks
--export([diamond/1, start/2, stop/1]).
+-export([diamond/1]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 -endif.
-
-start(_StartType, _StartArgs) ->
-    alphadiamond_sup:start_link().
-
-stop(_State) ->
-    ok.
-
-row_instructions_for(Letter) when is_atom(Letter) -> 
-	Alphabet = lists:seq($A,$Z),
-	SubAlphabetEndPos = string:str(Alphabet, atom_to_list(Letter)),
-	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
-	% io:format(user, "\n~p ~p\n", [Letter, DiamondHalf]),
-	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
 everything_but(Letter) when is_integer(Letter) -> 	"[^" ++ io_lib:format("~c", [Letter]) ++ "]";
 everything_but(Letter) -> 							"[^" ++ Letter ++ "]".
 
 row_for(Letter) ->
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
+
+row_instructions_for(Letter) when is_atom(Letter) -> 
+	Alphabet = lists:seq($A,$Z),
+	SubAlphabetEndPos = string:str(Alphabet, atom_to_list(Letter)),
+	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
+	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
 is_valid_spec(Spec) when is_atom(Spec) -> is_valid_spec(atom_to_list(Spec)); 
 is_valid_spec(Spec) when is_integer(Spec) -> is_valid_spec(io_lib:format("~c", [Spec])); 
