@@ -17,9 +17,9 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     ok.
 
-row_instructions_for(Letter) -> 
+row_instructions_for(Letter) when is_atom(Letter) -> 
 	Alphabet = lists:seq($A,$Z),
-	SubAlphabetEndPos = string:str(Alphabet, Letter),
+	SubAlphabetEndPos = string:str(Alphabet, atom_to_list(Letter)),
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
 	% io:format(user, "\n~p ~p\n", [Letter, DiamondHalf]),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
@@ -35,7 +35,7 @@ is_valid_spec(Spec) when is_integer(Spec) -> is_valid_spec(io_lib:format("~c", [
 is_valid_spec(Spec) -> 
 	TrimmedSpec = re:replace(Spec, " ", "", [global, {return, list}]),
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
-	(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1).
+	[(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1)|list_to_atom(CleanSpec)].
 
 diamond([Spec|_]) -> 
 	diamond(Spec);
@@ -45,10 +45,10 @@ diamond([]) ->
 diamond(Spec) when is_atom(Spec) -> 
 	diamond(atom_to_list(Spec));
 diamond(Spec) ->
-	ValidSpec = is_valid_spec(Spec),
+	[IsValidSpec|ValidSpec] = is_valid_spec(Spec),
     if
-    	ValidSpec ->
-			Instructions = row_instructions_for(lists:nth(1, io_lib:format("~c", [Spec]))),
+    	IsValidSpec ->
+			Instructions = row_instructions_for(ValidSpec),
 			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
 			true;
 		true ->
@@ -69,21 +69,25 @@ row_test_() -> [
 ].
 
 row_instructions_test_() -> [
-	?_assertEqual("A", row_instructions_for("A")),
-	?_assertEqual("ABA", row_instructions_for("B")),
-	?_assertEqual("ABCBA", row_instructions_for("C"))
+	?_assertEqual("A", row_instructions_for('A')),
+	?_assertEqual("ABA", row_instructions_for('B')),
+	?_assertEqual("ABCBA", row_instructions_for('C'))
 ].
 
+status_after_spec_validation(Spec) ->
+	[SpecStatus|_] = is_valid_spec(Spec),
+	SpecStatus.
+
 valid_spec_test_() -> [
-	?_assert(is_valid_spec("A")),
-	?_assert(is_valid_spec('A')),
-	?_assert(is_valid_spec("c")),
-	?_assert(is_valid_spec("  E   ")),
-	?_assertNot(is_valid_spec("AA")),
-	?_assertNot(is_valid_spec(" ")),
-	?_assertNot(is_valid_spec("4")),
-	?_assertNot(is_valid_spec("{")),
-	?_assertNot(is_valid_spec(""))
+	?_assert(status_after_spec_validation("A")),
+	?_assert(status_after_spec_validation('A')),
+	?_assert(status_after_spec_validation("c")),
+	?_assert(status_after_spec_validation("  E   ")),
+	?_assertNot(status_after_spec_validation("AA")),
+	?_assertNot(status_after_spec_validation(" ")),
+	?_assertNot(status_after_spec_validation("4")),
+	?_assertNot(status_after_spec_validation("{")),
+	?_assertNot(status_after_spec_validation(""))
 ].
 
 positive_smoke_test_() -> [
