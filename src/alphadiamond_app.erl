@@ -75,9 +75,9 @@ valid_spec_test_() ->
 	].
 
 positive_smoke_test() ->
-    ?assert(diamond("Z")).
+    ?assert(diamond(['Z'])).
 
 negative_smoke_test() ->
-    ?assertNot(diamond(";")).
+    ?assertNot(diamond([';'])).
 
 -endif.
