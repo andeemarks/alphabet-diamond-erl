@@ -21,6 +21,7 @@ row_instructions_for(Letter) ->
 	Alphabet = lists:seq($A,$Z),
 	SubAlphabetEndPos = string:str(Alphabet, Letter),
 	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
+	% io:format(user, "\n~p ~p\n", [Letter, DiamondHalf]),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
 everything_but(Letter) when is_integer(Letter) -> 	"[^" ++ io_lib:format("~c", [Letter]) ++ "]";
@@ -30,22 +31,24 @@ row_for(Letter) ->
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
 is_valid_spec(Spec) when is_atom(Spec) -> is_valid_spec(atom_to_list(Spec)); 
+is_valid_spec(Spec) when is_integer(Spec) -> is_valid_spec(io_lib:format("~c", [Spec])); 
 is_valid_spec(Spec) -> 
-	% io:format(user, "\n~p\n", [Spec]),
-	TrimmedSpec = string:strip(Spec),
+	TrimmedSpec = re:replace(Spec, " ", "", [global, {return, list}]),
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
 	(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1).
 
-diamond([Spec|_]) -> diamond(Spec);
+diamond([Spec|_]) -> 
+	diamond(Spec);
 diamond([]) -> 
 	io:format(user, "\nINVALID INPUT\n", []),
 	false;
-diamond(Spec) when is_atom(Spec) -> diamond(atom_to_list(Spec));
+diamond(Spec) when is_atom(Spec) -> 
+	diamond(atom_to_list(Spec));
 diamond(Spec) ->
 	ValidSpec = is_valid_spec(Spec),
     if
     	ValidSpec ->
-			Instructions = row_instructions_for(Spec),
+			Instructions = row_instructions_for(lists:nth(1, io_lib:format("~c", [Spec]))),
 			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
 			true;
 		true ->
@@ -83,8 +86,10 @@ valid_spec_test_() -> [
 	?_assertNot(is_valid_spec(""))
 ].
 
-positive_smoke_test_() ->
-    ?_assert(diamond(['Z'])).
+positive_smoke_test_() -> [
+    ?_assert(diamond(['A'])),
+    ?_assert(diamond(["A"]))
+].	
 
 negative_smoke_test_() -> [
 	?_assertNot(diamond([";"])),
