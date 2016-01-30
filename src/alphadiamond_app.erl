@@ -28,12 +28,10 @@ is_valid_spec(Spec) ->
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
 	[(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1)|list_to_atom(CleanSpec)].
 
-diamond([Spec|_]) -> 
-	diamond(Spec);
-diamond([]) -> 
-	handle_invalid_spec();
-diamond(Spec) when is_atom(Spec) -> 
-	diamond(atom_to_list(Spec));
+diamond() 							-> handle_invalid_spec().
+diamond([]) 						-> handle_invalid_spec();
+diamond([Spec|_]) 					-> diamond(Spec);
+diamond(Spec) when is_atom(Spec) 	-> diamond(atom_to_list(Spec));
 diamond(Spec) ->
 	[IsValidSpec|ValidSpec] = is_valid_spec(Spec),
     if
@@ -45,8 +43,6 @@ diamond(Spec) ->
 			handle_invalid_spec()
 	end.
 
-diamond() -> 
-	handle_invalid_spec().
 
 handle_invalid_spec() ->
 	io:format(user, "\nINVALID INPUT\n", []),
