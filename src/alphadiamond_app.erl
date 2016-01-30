@@ -1,6 +1,7 @@
 -module(alphadiamond_app).
 
 -define(ROW_TEMPLATE, "ZYXWVUTSRQPONMLKJIHGFEDCBABCDEFGHIJKLMNOPQRSTUVWXYZ").
+-define(ALPHABET, lists:seq($A,$Z)).
 
 -export([diamond/1]).
 
@@ -15,9 +16,8 @@ row_for(Letter) ->
 	re:replace(?ROW_TEMPLATE, everything_but(Letter), " ", [global, {return,list}]).
 
 row_instructions_for(Letter) when is_atom(Letter) -> 
-	Alphabet = lists:seq($A,$Z),
-	SubAlphabetEndPos = string:str(Alphabet, atom_to_list(Letter)),
-	DiamondHalf = lists:sublist(Alphabet, SubAlphabetEndPos),
+	SubAlphabetEndPos = string:str(?ALPHABET, atom_to_list(Letter)),
+	DiamondHalf = lists:sublist(?ALPHABET, SubAlphabetEndPos),
 	lists:append(DiamondHalf, lists:reverse(lists:droplast(DiamondHalf))).
 
 is_valid_spec(Spec) when is_atom(Spec) 		-> is_valid_spec(atom_to_list(Spec)); 
