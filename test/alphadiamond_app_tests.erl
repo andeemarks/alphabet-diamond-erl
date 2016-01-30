@@ -2,6 +2,17 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+positive_smoke_test_() -> [
+    ?_assertEqual(ok, alphadiamond_app:diamond(['A'])),
+    ?_assertEqual(ok, alphadiamond_app:diamond(["A"]))
+].	
+
+negative_smoke_test_() -> [
+	?_assertEqual(error, alphadiamond_app:diamond([";"])),
+	?_assertEqual(error, alphadiamond_app:diamond()),
+	?_assertEqual(error, alphadiamond_app:diamond([]))
+].
+
 row_test_() -> [
 	?_assertEqual("A", string:strip(alphadiamond_app:row_for("A"))),
 	?_assertEqual("B B", string:strip(alphadiamond_app:row_for("B"))),
@@ -28,15 +39,4 @@ valid_spec_test_() -> [
 	?_assertNot(status_after_spec_validation("4")),
 	?_assertNot(status_after_spec_validation("{")),
 	?_assertNot(status_after_spec_validation(""))
-].
-
-positive_smoke_test_() -> [
-    ?_assertEqual(ok, alphadiamond_app:diamond(['A'])),
-    ?_assertEqual(ok, alphadiamond_app:diamond(["A"]))
-].	
-
-negative_smoke_test_() -> [
-	?_assertEqual(error, alphadiamond_app:diamond([";"])),
-	?_assertEqual(error, alphadiamond_app:diamond()),
-	?_assertEqual(error, alphadiamond_app:diamond([]))
 ].
