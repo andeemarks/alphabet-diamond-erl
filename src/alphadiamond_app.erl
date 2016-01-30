@@ -31,8 +31,7 @@ is_valid_spec(Spec) ->
 diamond([Spec|_]) -> 
 	diamond(Spec);
 diamond([]) -> 
-	io:format(user, "\nINVALID INPUT\n", []),
-	false;
+	handle_invalid_spec();
 diamond(Spec) when is_atom(Spec) -> 
 	diamond(atom_to_list(Spec));
 diamond(Spec) ->
@@ -43,11 +42,13 @@ diamond(Spec) ->
 			lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
 			true;
 		true ->
-			io:format(user, "\nINVALID INPUT\n", []),
-			false
+			handle_invalid_spec()
 	end.
 
 diamond() -> 
+	handle_invalid_spec().
+
+handle_invalid_spec() ->
 	io:format(user, "\nINVALID INPUT\n", []),
 	false.	
 
