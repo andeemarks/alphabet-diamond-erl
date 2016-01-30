@@ -34,7 +34,7 @@ is_valid_spec(Spec) ->
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
 	(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1).
 
-diamond(Spec) -> 
+diamond([Spec|_]) -> 
 	ValidSpec = is_valid_spec(Spec),
     if
     	ValidSpec ->
@@ -45,6 +45,10 @@ diamond(Spec) ->
 			io:format(user, "\nINVALID INPUT\n", []),
 			false
 	end.
+
+diamond() -> 
+	io:format(user, "\nINVALID INPUT\n", []),
+	false.	
 
 -ifdef(TEST).
 
@@ -77,7 +81,10 @@ valid_spec_test_() ->
 positive_smoke_test() ->
     ?assert(diamond(['Z'])).
 
-negative_smoke_test() ->
-    ?assertNot(diamond([';'])).
+negative_smoke_test_() ->
+	[
+    	?_assertNot(diamond([";"])),
+    	?_assertNot(diamond())
+    ].
 
 -endif.
