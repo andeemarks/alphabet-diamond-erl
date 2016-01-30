@@ -25,7 +25,7 @@ is_valid_spec(Spec) when is_integer(Spec) 	-> is_valid_spec(io_lib:format("~c", 
 is_valid_spec(Spec) -> 
 	TrimmedSpec = re:replace(Spec, " ", "", [global, {return, list}]),
 	CleanSpec = re:replace(TrimmedSpec, "[^A-Za-z]", "", [global, {return,list}]),
-	[(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1)|list_to_atom(CleanSpec)].
+	{(CleanSpec =:= TrimmedSpec) and (length(CleanSpec) == 1), list_to_atom(CleanSpec)}.
 
 diamond() 							-> handle_invalid_spec().
 diamond([]) 						-> handle_invalid_spec();
@@ -33,8 +33,8 @@ diamond([Spec|_]) 					-> diamond(Spec);
 diamond(Spec) when is_atom(Spec) 	-> diamond(atom_to_list(Spec));
 diamond(Spec) 						-> process_spec(is_valid_spec(Spec)).
 
-process_spec([false|_]) 		-> handle_invalid_spec();
-process_spec([true|ValidSpec]) 	->
+process_spec({false, _}) 		-> handle_invalid_spec();
+process_spec({true, ValidSpec}) ->
 	Instructions = row_instructions_for(ValidSpec),
 	lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
 	true.
@@ -58,7 +58,7 @@ row_instructions_test_() -> [
 ].
 
 status_after_spec_validation(Spec) ->
-	[SpecStatus|_] = is_valid_spec(Spec),
+	{SpecStatus, _} = is_valid_spec(Spec),
 	SpecStatus.
 
 valid_spec_test_() -> [
