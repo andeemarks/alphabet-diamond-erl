@@ -33,6 +33,7 @@ process_spec({false, _}) 		-> handle_invalid_spec();
 process_spec({true, ValidSpec}) ->
 	Instructions = row_instructions_for(ValidSpec),
 	lists:map(fun(Instruction) -> io:format(user, "\n~p", [row_for(Instruction)]) end, Instructions),
+	io:format("\n"),
 	ok.
 
 handle_invalid_spec() ->
