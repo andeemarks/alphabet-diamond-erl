@@ -13,10 +13,12 @@ negative_smoke_test_() -> [
 	?_assertEqual(error, alphadiamond_app:diamond([]))
 ].
 
+row_after_strip(Letter) -> string:strip(alphadiamond_app:row_for(Letter)).
+
 row_test_() -> [
-	?_assertEqual("A", string:strip(alphadiamond_app:row_for("A"))),
-	?_assertEqual("B B", string:strip(alphadiamond_app:row_for("B"))),
-	?_assertEqual("J                 J", string:strip(alphadiamond_app:row_for("J")))
+	?_assertEqual("A", row_after_strip("A")),
+	?_assertEqual("B B", row_after_strip("B")),
+	?_assertEqual("J                 J", row_after_strip("J"))
 ].
 
 row_instructions_test_() -> [
